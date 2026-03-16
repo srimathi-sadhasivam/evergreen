@@ -1,0 +1,174 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Playfair+Display:wght@600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Fresh Natural Green Palette */
+    --background: 60 30% 98%;
+    --foreground: 150 25% 15%;
+
+    --card: 60 20% 97%;
+    --card-foreground: 150 25% 15%;
+
+    --popover: 60 30% 98%;
+    --popover-foreground: 150 25% 15%;
+
+    /* Primary - Fresh Palm Green */
+    --primary: 145 45% 32%;
+    --primary-foreground: 60 30% 98%;
+
+    /* Secondary - Warm Coconut Brown */
+    --secondary: 30 35% 45%;
+    --secondary-foreground: 60 30% 98%;
+
+    /* Muted - Soft Sage */
+    --muted: 140 20% 92%;
+    --muted-foreground: 150 15% 40%;
+
+    /* Accent - Light Leaf Green */
+    --accent: 145 35% 88%;
+    --accent-foreground: 145 45% 25%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 30% 98%;
+
+    --border: 140 15% 85%;
+    --input: 140 15% 85%;
+    --ring: 145 45% 32%;
+
+    --radius: 0.75rem;
+
+    /* Custom Colors */
+    --cream: 45 40% 96%;
+    --coconut-brown: 30 35% 35%;
+    --leaf-light: 145 30% 94%;
+    --palm-dark: 150 35% 22%;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(145 45% 32% / 0.9), hsl(150 35% 22% / 0.95));
+    --gradient-card: linear-gradient(180deg, hsl(60 30% 98%), hsl(140 20% 96%));
+    --gradient-accent: linear-gradient(135deg, hsl(145 35% 88%), hsl(60 20% 97%));
+
+    /* Shadows */
+    --shadow-soft: 0 4px 20px hsl(150 25% 15% / 0.08);
+    --shadow-card: 0 8px 30px hsl(150 25% 15% / 0.1);
+    --shadow-elevated: 0 12px 40px hsl(145 45% 32% / 0.15);
+
+    /* Sidebar defaults */
+    --sidebar-background: 60 30% 98%;
+    --sidebar-foreground: 150 25% 15%;
+    --sidebar-primary: 145 45% 32%;
+    --sidebar-primary-foreground: 60 30% 98%;
+    --sidebar-accent: 145 35% 88%;
+    --sidebar-accent-foreground: 145 45% 25%;
+    --sidebar-border: 140 15% 85%;
+    --sidebar-ring: 145 45% 32%;
+  }
+
+  .dark {
+    --background: 150 25% 10%;
+    --foreground: 60 30% 95%;
+
+    --card: 150 20% 14%;
+    --card-foreground: 60 30% 95%;
+
+    --popover: 150 25% 10%;
+    --popover-foreground: 60 30% 95%;
+
+    --primary: 145 40% 45%;
+    --primary-foreground: 150 25% 10%;
+
+    --secondary: 30 30% 55%;
+    --secondary-foreground: 150 25% 10%;
+
+    --muted: 150 15% 20%;
+    --muted-foreground: 140 15% 65%;
+
+    --accent: 145 25% 25%;
+    --accent-foreground: 145 35% 85%;
+
+    --destructive: 0 62.8% 45%;
+    --destructive-foreground: 60 30% 98%;
+
+    --border: 150 15% 22%;
+    --input: 150 15% 22%;
+    --ring: 145 40% 45%;
+
+    --cream: 45 20% 15%;
+    --coconut-brown: 30 30% 50%;
+    --leaf-light: 145 20% 18%;
+    --palm-dark: 150 30% 35%;
+
+    --sidebar-background: 150 25% 10%;
+    --sidebar-foreground: 60 30% 95%;
+    --sidebar-primary: 145 40% 45%;
+    --sidebar-primary-foreground: 150 25% 10%;
+    --sidebar-accent: 145 25% 25%;
+    --sidebar-accent-foreground: 145 35% 85%;
+    --sidebar-border: 150 15% 22%;
+    --sidebar-ring: 145 40% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .font-display {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+  }
+
+  .card-elevated {
+    box-shadow: var(--shadow-card);
+  }
+
+  .section-padding {
+    @apply py-16 md:py-24 px-4;
+  }
+}
+
+@layer utilities {
+  .bg-cream {
+    background-color: hsl(var(--cream));
+  }
+
+  .bg-leaf-light {
+    background-color: hsl(var(--leaf-light));
+  }
+
+  .text-coconut {
+    color: hsl(var(--coconut-brown));
+  }
+
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+}
