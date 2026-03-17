@@ -10,7 +10,7 @@ import { adminLogin, setAdminToken } from "@/lib/adminAuth";
 const AdminLogin = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [email, setEmail] = useState("admin@gmail.com");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 

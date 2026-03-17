@@ -24,7 +24,7 @@ const Login: React.FC = () => {
     if (success) {
       navigate('/admin/dashboard');
     } else {
-      setError('Invalid email or password. Try admin@evergreen.com / admin123');
+      setError('Invalid email or password.');
     }
   };
 
@@ -65,7 +65,7 @@ const Login: React.FC = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@evergreen.com"
+                  placeholder="you@example.com"
                   required
                 />
               </div>
@@ -98,11 +98,6 @@ const Login: React.FC = () => {
               </Button>
             </form>
             
-            <div className="mt-4 text-center text-sm text-muted-foreground">
-              <p>Demo credentials:</p>
-              <p>Email: admin@evergreen.com</p>
-              <p>Password: admin123</p>
-            </div>
           </CardContent>
         </Card>
       </div>
