@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { MessageCircle, Phone } from "lucide-react";
+import SmartInquiryModal from "./SmartInquiryModal";
+import { useState } from "react";
 
 type WholesaleProduct = {
   name: string;
@@ -112,6 +114,9 @@ const buildWhatsAppTemplate = (product: WholesaleProduct) => {
 };
 
 const ProductsSection = () => {
+  const [selectedProduct, setSelectedProduct] = useState<WholesaleProduct | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const today = new Date().toLocaleDateString("en-IN", {
     day: "2-digit",
     month: "short",
@@ -119,7 +124,8 @@ const ProductsSection = () => {
   });
 
   const handleEnquiry = (product: WholesaleProduct) => {
-    window.open(buildWhatsAppTemplate(product), "_blank");
+    setSelectedProduct(product);
+    setIsModalOpen(true);
   };
 
   const handleCallNow = () => {
@@ -246,6 +252,18 @@ const ProductsSection = () => {
           </Button>
         </div>
       </div>
+
+      {/* Smart Inquiry Modal */}
+      {selectedProduct && (
+        <SmartInquiryModal
+          product={selectedProduct}
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedProduct(null);
+          }}
+        />
+      )}
     </section>
   );
 };

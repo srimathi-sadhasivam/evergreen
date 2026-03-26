@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   Package, 
@@ -8,13 +9,15 @@ import {
   DollarSign,
   Activity
 } from 'lucide-react';
+import { useOrders } from '@/contexts/OrdersContext';
 
 const AdminDashboard: React.FC = () => {
-  // Mock data - replace with actual API calls
-  const stats = [
+  const navigate = useNavigate();
+  const { orders, addOrder } = useOrders();
+  const [stats, setStats] = useState([
     {
       title: 'Total Orders',
-      value: '1,234',
+      value: '0',
       change: '+12.3%',
       changeType: 'positive' as const,
       icon: ShoppingCart,
@@ -41,21 +44,50 @@ const AdminDashboard: React.FC = () => {
     },
     {
       title: 'Revenue',
-      value: '₹2,45,678',
+      value: '₹0',
       change: '+23.1%',
       changeType: 'positive' as const,
       icon: DollarSign,
       color: 'text-yellow-600',
       bgColor: 'bg-yellow-100'
     }
-  ];
+  ]);
 
-  const recentOrders = [
-    { id: 'ORD001', customer: 'John Doe', amount: '₹1,234', status: 'Completed', date: '2024-01-15' },
-    { id: 'ORD002', customer: 'Jane Smith', amount: '₹2,456', status: 'Processing', date: '2024-01-15' },
-    { id: 'ORD003', customer: 'Bob Johnson', amount: '₹987', status: 'Pending', date: '2024-01-14' },
-    { id: 'ORD004', customer: 'Alice Brown', amount: '₹3,210', status: 'Completed', date: '2024-01-14' },
-  ];
+  // Calculate stats from orders
+  useEffect(() => {
+    const totalOrders = orders.length;
+    const totalRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0);
+    
+    setStats(prev => {
+      const newStats = [...prev];
+      newStats[0].value = totalOrders.toLocaleString();
+      newStats[3].value = `₹${totalRevenue.toLocaleString("en-IN")}`;
+      return newStats;
+    });
+  }, [orders]);
+
+  // Update recent orders from context
+  const recentOrders = orders.slice(0, 4).map(order => ({
+    id: order._id.slice(-8),
+    customer: order.user.name,
+    amount: `₹${order.totalAmount.toLocaleString("en-IN")}`,
+    status: order.status.charAt(0).toUpperCase() + order.status.slice(1),
+    date: new Date(order.createdAt).toLocaleDateString()
+  }));
+
+  // Listen for manual order updates (for backward compatibility)
+  useEffect(() => {
+    const handleManualOrderUpdate = (event: CustomEvent) => {
+      const newOrder = event.detail;
+      addOrder(newOrder);
+    };
+
+    window.addEventListener('manualOrderCreated', handleManualOrderUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('manualOrderCreated', handleManualOrderUpdate as EventListener);
+    };
+  }, [addOrder]);
 
   const topProducts = [
     { name: 'Fresh Tender Coconut', sales: 234, revenue: '₹46,800' },
@@ -161,17 +193,26 @@ const AdminDashboard: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors">
+            <div 
+              className="p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors"
+              onClick={() => navigate('/admin/products')}
+            >
               <Package className="h-8 w-8 text-primary mb-2" />
               <h3 className="font-medium">Add New Product</h3>
               <p className="text-sm text-muted-foreground">Add a new product to your inventory</p>
             </div>
-            <div className="p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors">
+            <div 
+              className="p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors"
+              onClick={() => navigate('/admin/orders')}
+            >
               <ShoppingCart className="h-8 w-8 text-primary mb-2" />
               <h3 className="font-medium">View Orders</h3>
               <p className="text-sm text-muted-foreground">Manage and track customer orders</p>
             </div>
-            <div className="p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors">
+            <div 
+              className="p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors"
+              onClick={() => navigate('/admin/users')}
+            >
               <Users className="h-8 w-8 text-primary mb-2" />
               <h3 className="font-medium">Manage Users</h3>
               <p className="text-sm text-muted-foreground">View and manage customer accounts</p>

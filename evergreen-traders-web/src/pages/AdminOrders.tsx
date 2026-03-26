@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, Filter, Eye, Edit, Trash2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
-import { fetchOrders, updateOrder, deleteOrder, type Order } from "@/lib/api";
+import ManualOrderForm from "@/components/ManualOrderForm";
+import { useOrders } from '@/contexts/OrdersContext';
 import {
   ADMIN_TOKEN_STORAGE_KEY,
   clearAdminToken,
@@ -17,8 +17,8 @@ import {
 
 const AdminOrders: React.FC = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { orders, updateOrderStatus, deleteOrder } = useOrders();
   const [token, setToken] = useState<string | null>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
@@ -57,35 +57,6 @@ const AdminOrders: React.FC = () => {
     };
   }, [navigate]);
 
-  const { data: orders = [], isLoading } = useQuery<Order[]>({
-    queryKey: ["orders"],
-    queryFn: () => fetchOrders(token as string),
-    enabled: !!token && !isCheckingAuth,
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: string }) =>
-      updateOrder(id, { status }, token as string),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["orders"] });
-      toast({ title: "Order updated" });
-    },
-    onError: () => {
-      toast({ title: "Failed to update order", description: "Please try again." });
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => deleteOrder(id, token as string),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["orders"] });
-      toast({ title: "Order deleted" });
-    },
-    onError: () => {
-      toast({ title: "Failed to delete order", description: "Please try again." });
-    },
-  });
-
   if (isCheckingAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -95,12 +66,14 @@ const AdminOrders: React.FC = () => {
   }
 
   const handleStatusChange = (orderId: string, newStatus: string) => {
-    updateMutation.mutate({ id: orderId, status: newStatus });
+    updateOrderStatus(orderId, newStatus);
+    toast({ title: "Order updated" });
   };
 
   const handleDelete = (orderId: string) => {
     if (window.confirm("Are you sure you want to delete this order?")) {
-      deleteMutation.mutate(orderId);
+      deleteOrder(orderId);
+      toast({ title: "Order deleted" });
     }
   };
 
@@ -129,10 +102,13 @@ const AdminOrders: React.FC = () => {
           <h1 className="text-3xl font-bold text-foreground">Orders</h1>
           <p className="text-muted-foreground">Manage customer orders and track deliveries</p>
         </div>
-        <Button>
-          <Filter className="h-4 w-4 mr-2" />
-          Filter
-        </Button>
+        <div className="flex gap-3">
+          <ManualOrderForm />
+          <Button variant="outline">
+            <Filter className="h-4 w-4 mr-2" />
+            Filter
+          </Button>
+        </div>
       </div>
 
       {/* Search and Filters */}
@@ -161,9 +137,7 @@ const AdminOrders: React.FC = () => {
           <CardDescription>A total of {orders.length} orders</CardDescription>
         </CardHeader>
         <CardContent>
-          {isLoading ? (
-            <p className="text-muted-foreground">Loading orders...</p>
-          ) : orders.length === 0 ? (
+          {orders.length === 0 ? (
             <p className="text-muted-foreground">No orders found.</p>
           ) : (
             <div className="overflow-x-auto">

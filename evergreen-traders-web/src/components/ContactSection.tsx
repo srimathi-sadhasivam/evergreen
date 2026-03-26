@@ -13,30 +13,73 @@ const ContactSection = () => {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Create WhatsApp message with form data
-    const whatsappMessage = `Hello! My name is ${formData.name}.\n\nPhone: ${formData.phone}\n\nMessage: ${formData.message}`;
-    window.open(
-      `https://wa.me/919876543210?text=${encodeURIComponent(whatsappMessage)}`,
-      "_blank"
-    );
+    // Validation: Check if required fields are filled
+    if (!formData.name.trim() || !formData.message.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill all fields",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      // Send data to API
+      const response = await fetch('/api/inquiries/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          customerName: formData.name,
+          phoneNumber: formData.phone,
+          message: formData.message,
+        }),
+      });
 
-    toast({
-      title: "Redirecting to WhatsApp",
-      description: "Your message is ready to send via WhatsApp.",
-    });
+      const result = await response.json();
 
-    setFormData({ name: "", phone: "", message: "" });
+      if (result.success) {
+        // Create WhatsApp message with order details
+        const whatsappMessage = `Hello Evergreen Traders! 
+New Inquiry from Website:
+Name: ${formData.name}
+Phone: ${formData.phone}
+Message: ${formData.message}
+
+Order ID: ${result.orderId}`;
+
+        // Open WhatsApp with pre-filled message
+        window.open(`https://wa.me/919842868885?text=${encodeURIComponent(whatsappMessage)}`, "_blank");
+
+        toast({
+          title: "Redirecting to WhatsApp",
+          description: "Your message is ready to send via WhatsApp.",
+        });
+
+        setFormData({ name: "", phone: "", message: "" });
+      } else {
+        throw new Error(result.message || 'Failed to submit inquiry');
+      }
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      toast({
+        title: "Submission Error",
+        description: "Failed to submit your message. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleWhatsAppClick = () => {
-    window.open("https://wa.me/919876543210?text=Hello! I'm interested in your coconut products.", "_blank");
+    window.open("https://wa.me/919842868885?text=Hello! I'm interested in your coconut products.", "_blank");
   };
 
   const handlePhoneClick = () => {
-    window.location.href = "tel:+919876543210";
+    window.location.href = "tel:+919842868885";
   };
 
   return (
@@ -81,7 +124,7 @@ const ContactSection = () => {
                   onClick={handlePhoneClick}
                   className="text-primary hover:underline font-medium"
                 >
-                  +91 98765 43210
+                  +91 98428 68885
                 </button>
               </div>
             </div>

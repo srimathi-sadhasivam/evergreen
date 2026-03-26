@@ -7,46 +7,68 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Search, Filter, Eye, Edit, Trash2, Mail, Phone } from 'lucide-react';
 
 const AdminUsers: React.FC = () => {
-  // Mock data - replace with actual API calls
+  // Local Tamil user data from Namakkal/Paramathi Velur area
   const users = [
     {
       id: '1',
-      name: 'John Doe',
-      email: 'john@example.com',
-      phone: '+91 98765 43210',
+      name: 'P. Arumugam',
+      email: 'arumugam.traders@example.com',
+      phone: '+91 98428 68885',
       role: 'customer',
       status: 'Active',
       joinDate: '2024-01-10',
       totalOrders: 5,
-      totalSpent: '₹5,678'
+      totalSpent: '₹5,700'
     },
     {
       id: '2',
-      name: 'Jane Smith',
-      email: 'jane@example.com',
-      phone: '+91 98765 43211',
+      name: 'K. Selvam',
+      email: 'selvam.coconut@example.com',
+      phone: '+91 98427 65432',
       role: 'customer',
       status: 'Active',
       joinDate: '2024-01-12',
       totalOrders: 3,
-      totalSpent: '₹3,456'
+      totalSpent: '₹6,400'
     },
     {
       id: '3',
-      name: 'Bob Johnson',
-      email: 'bob@example.com',
-      phone: '+91 98765 43212',
+      name: 'M. Rajendran',
+      email: 'rajendran.farms@example.com',
+      phone: '+91 99445 12345',
       role: 'customer',
       status: 'Inactive',
       joinDate: '2024-01-08',
       totalOrders: 1,
-      totalSpent: '₹987'
+      totalSpent: '₹4,725'
     },
     {
       id: '4',
-      name: 'Admin User',
-      email: 'admin@evergreen.com',
-      phone: '+91 98765 43213',
+      name: 'S. Palanisamy',
+      email: 'palanisamy.export@example.com',
+      phone: '+91 93654 78901',
+      role: 'customer',
+      status: 'Active',
+      joinDate: '2024-01-05',
+      totalOrders: 8,
+      totalSpent: '₹12,850'
+    },
+    {
+      id: '5',
+      name: 'V. Lakshmi',
+      email: 'lakshmi.traders@example.com',
+      phone: '+91 97894 56723',
+      role: 'customer',
+      status: 'Active',
+      joinDate: '2024-01-15',
+      totalOrders: 4,
+      totalSpent: '₹8,700'
+    },
+    {
+      id: '6',
+      name: 'Admin',
+      email: 'admin@evergreentraders.com',
+      phone: '+91 98428 68885',
       role: 'admin',
       status: 'Active',
       joinDate: '2024-01-01',
