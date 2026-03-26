@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { OrdersProvider } from "@/contexts/OrdersContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminLayout from "@/components/AdminLayout";
+import WhatsAppFab from "@/components/ui/WhatsAppFab";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
@@ -47,6 +48,12 @@ const App = () => (
 
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
+              </Routes>
+              
+              {/* WhatsApp FAB - Only show on main site, not admin */}
+              <Routes>
+                <Route path="/" element={<WhatsAppFab />} />
+                <Route path="/login" element={<WhatsAppFab />} />
               </Routes>
             </BrowserRouter>
           </OrdersProvider>

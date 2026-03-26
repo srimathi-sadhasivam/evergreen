@@ -28,6 +28,13 @@ const ContactSection = () => {
     
     try {
       // Send data to API
+      console.log('Submitting contact form to:', '/api/inquiries/contact');
+      console.log('Form data:', {
+        customerName: formData.name,
+        phoneNumber: formData.phone,
+        message: formData.message,
+      });
+
       const response = await fetch('/api/inquiries/contact', {
         method: 'POST',
         headers: {
@@ -40,7 +47,11 @@ const ContactSection = () => {
         }),
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+
       const result = await response.json();
+      console.log('Response data:', result);
 
       if (result.success) {
         // Create WhatsApp message with order details
@@ -66,11 +77,29 @@ Order ID: ${result.orderId}`;
       }
     } catch (error) {
       console.error('Error submitting contact form:', error);
-      toast({
-        title: "Submission Error",
-        description: "Failed to submit your message. Please try again.",
-        variant: "destructive",
+      console.error('Full error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
       });
+      
+      // Fallback: Still allow WhatsApp redirect even if API fails
+      const whatsappMessage = `Hello Evergreen Traders! 
+New Inquiry from Website:
+Name: ${formData.name}
+Phone: ${formData.phone}
+Message: ${formData.message}`;
+
+      // Open WhatsApp with pre-filled message as fallback
+      window.open(`https://wa.me/919842868885?text=${encodeURIComponent(whatsappMessage)}`, "_blank");
+
+      toast({
+        title: "Opening WhatsApp",
+        description: "Database save failed, but you can still send us a message via WhatsApp.",
+        variant: "default",
+      });
+
+      setFormData({ name: "", phone: "", message: "" });
     }
   };
 

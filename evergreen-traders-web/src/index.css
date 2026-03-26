@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Playfair+Display:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -56,6 +56,13 @@
     --shadow-soft: 0 4px 20px hsl(150 25% 15% / 0.08);
     --shadow-card: 0 8px 30px hsl(150 25% 15% / 0.1);
     --shadow-elevated: 0 12px 40px hsl(145 45% 32% / 0.15);
+    --shadow-glass: 0 8px 32px hsl(0 0% 0% / 0.12);
+    --shadow-glass-hover: 0 12px 48px hsl(0 0% 0% / 0.16);
+
+    /* Glassmorphism */
+    --glass-bg: hsl(255 100% 100% / 0.1);
+    --glass-border: hsl(255 100% 100% / 0.2);
+    --glass-backdrop: blur(16px) saturate(180%);
 
     /* Sidebar defaults */
     --sidebar-background: 60 30% 98%;
@@ -120,7 +127,7 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
 
   html {
@@ -144,6 +151,32 @@
 
   .section-padding {
     @apply py-16 md:py-24 px-4;
+  }
+
+  /* Glassmorphism Components */
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-glass);
+    transition: all 0.3s ease;
+  }
+
+  .glass-card:hover {
+    box-shadow: var(--shadow-glass-hover);
+    border-color: hsl(255 100% 100% / 0.3);
+  }
+
+  .premium-card {
+    background: linear-gradient(135deg, hsl(255 100% 100% / 0.1), hsl(255 100% 100% / 0.05));
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid hsl(255 100% 100% / 0.18);
+    box-shadow: 0 8px 32px hsl(0 0% 0% / 0.12);
+  }
+
+  .premium-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 48px hsl(0 0% 0% / 0.16);
   }
 }
 

@@ -10,6 +10,7 @@ import {
   Activity
 } from 'lucide-react';
 import { useOrders } from '@/contexts/OrdersContext';
+import { AnimatedCard } from '@/components/ui/motion';
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -99,102 +100,41 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome to your admin dashboard. Here's an overview of your business.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground font-display">Dashboard</h1>
+          <p className="text-muted-foreground">Welcome to Evergreen Traders Admin Panel</p>
+        </div>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => {
-          const Icon = stat.icon;
-          return (
-            <Card key={index}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                <div className={`p-2 rounded-full ${stat.bgColor}`}>
-                  <Icon className={`h-4 w-4 ${stat.color}`} />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
-                <p className="text-xs text-muted-foreground flex items-center gap-1">
-                  <TrendingUp className="h-3 w-3" />
-                  {stat.change} from last month
-                </p>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      {/* Recent Orders and Top Products */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Orders */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Orders</CardTitle>
-            <CardDescription>Latest orders from your customers</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentOrders.map((order) => (
-                <div key={order.id} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div>
-                    <p className="font-medium">{order.id}</p>
-                    <p className="text-sm text-muted-foreground">{order.customer}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium">{order.amount}</p>
-                    <span className={`
-                      text-xs px-2 py-1 rounded-full
-                      ${order.status === 'Completed' ? 'bg-green-100 text-green-800' : ''}
-                      ${order.status === 'Processing' ? 'bg-blue-100 text-blue-800' : ''}
-                      ${order.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : ''}
-                    `}>
-                      {order.status}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Top Products */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Top Products</CardTitle>
-            <CardDescription>Best performing products</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {topProducts.map((product, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div>
-                    <p className="font-medium">{product.name}</p>
-                    <p className="text-sm text-muted-foreground">{product.sales} sales</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium">{product.revenue}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        {stats.map((stat, index) => (
+          <AnimatedCard key={stat.title} delay={index * 0.1} glass>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+              <stat.icon className={`h-4 w-4 ${stat.color}`} />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stat.value}</div>
+              <p className={`text-xs ${stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'}`}>
+                {stat.change} from last month
+              </p>
+            </CardContent>
+          </AnimatedCard>
+        ))}
       </div>
 
       {/* Quick Actions */}
-      <Card>
+      <AnimatedCard delay={0.4} glass>
         <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
+          <CardTitle className="font-display">Quick Actions</CardTitle>
           <CardDescription>Common tasks you might want to perform</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div 
-              className="p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors"
+              className="p-4 border border-white/20 rounded-lg hover:bg-white/10 cursor-pointer transition-colors backdrop-blur-sm"
               onClick={() => navigate('/admin/products')}
             >
               <Package className="h-8 w-8 text-primary mb-2" />
@@ -202,7 +142,7 @@ const AdminDashboard: React.FC = () => {
               <p className="text-sm text-muted-foreground">Add a new product to your inventory</p>
             </div>
             <div 
-              className="p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors"
+              className="p-4 border border-white/20 rounded-lg hover:bg-white/10 cursor-pointer transition-colors backdrop-blur-sm"
               onClick={() => navigate('/admin/orders')}
             >
               <ShoppingCart className="h-8 w-8 text-primary mb-2" />
@@ -219,7 +159,54 @@ const AdminDashboard: React.FC = () => {
             </div>
           </div>
         </CardContent>
-      </Card>
+      </AnimatedCard>
+
+      {/* Recent Orders */}
+      <AnimatedCard delay={0.5} glass>
+        <CardHeader>
+          <CardTitle className="font-display">Recent Orders</CardTitle>
+          <CardDescription>Latest customer orders and their status</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {recentOrders.map((order, index) => (
+              <div key={order.id} className="flex items-center justify-between p-4 border border-white/20 rounded-lg backdrop-blur-sm">
+                <div>
+                  <p className="font-medium">{order.customer}</p>
+                  <p className="text-sm text-muted-foreground">Order {order.id}</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-medium">{order.amount}</p>
+                  <p className="text-sm text-muted-foreground">{order.status}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </AnimatedCard>
+
+      {/* Top Products */}
+      <AnimatedCard delay={0.6} glass>
+        <CardHeader>
+          <CardTitle className="font-display">Top Products</CardTitle>
+          <CardDescription>Best selling products this month</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {topProducts.map((product, index) => (
+              <div key={product.name} className="flex items-center justify-between p-4 border border-white/20 rounded-lg backdrop-blur-sm">
+                <div>
+                  <p className="font-medium">{product.name}</p>
+                  <p className="text-sm text-muted-foreground">{product.sales} units sold</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-medium">{product.revenue}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </AnimatedCard>
     </div>
   );
 };
