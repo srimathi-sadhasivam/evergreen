@@ -28,7 +28,7 @@ const AdminLayout: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate('/admin/login');
   };
 
   return (

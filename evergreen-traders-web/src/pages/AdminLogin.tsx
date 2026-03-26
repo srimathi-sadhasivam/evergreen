@@ -5,11 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { adminLogin, setAdminToken } from "@/lib/adminAuth";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -19,13 +20,11 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     try {
-      const res = await adminLogin(email, password);
+      const success = await login(email, password);
 
-      if (res.role !== "admin") {
-        throw new Error("You are not an admin");
+      if (!success) {
+        throw new Error("Invalid email or password");
       }
-
-      setAdminToken(res.token);
 
       toast({
         title: "Welcome, Admin",

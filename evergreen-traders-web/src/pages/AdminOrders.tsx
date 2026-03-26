@@ -1,56 +1,121 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, Filter, Eye, Edit, Trash2 } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast";
+import { fetchOrders, updateOrder, deleteOrder, type Order } from "@/lib/api";
+import {
+  ADMIN_TOKEN_STORAGE_KEY,
+  clearAdminToken,
+  fetchProfile,
+  getAdminToken,
+} from "@/lib/adminAuth";
 
 const AdminOrders: React.FC = () => {
-  // Mock data - replace with actual API calls
-  const orders = [
-    {
-      id: 'ORD001',
-      customer: 'John Doe',
-      email: 'john@example.com',
-      phone: '+91 98765 43210',
-      products: ['Fresh Tender Coconut x5', 'Dry Coconut x2'],
-      amount: '₹1,234',
-      status: 'Completed',
-      date: '2024-01-15',
-      address: '123 Main St, Chennai, Tamil Nadu'
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [token, setToken] = useState<string | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // Simple auth guard
+  useEffect(() => {
+    const storedToken = getAdminToken();
+
+    if (!storedToken) {
+      navigate("/admin/login");
+      return;
+    }
+
+    let isMounted = true;
+
+    (async () => {
+      try {
+        const profile = await fetchProfile(storedToken);
+        if (profile.role !== "admin") {
+          throw new Error("Not an admin");
+        }
+        if (isMounted) {
+          setToken(storedToken);
+        }
+      } catch {
+        clearAdminToken();
+        navigate("/admin/login");
+      } finally {
+        if (isMounted) {
+          setIsCheckingAuth(false);
+        }
+      }
+    })();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate]);
+
+  const { data: orders = [], isLoading } = useQuery<Order[]>({
+    queryKey: ["orders"],
+    queryFn: () => fetchOrders(token as string),
+    enabled: !!token && !isCheckingAuth,
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) =>
+      updateOrder(id, { status }, token as string),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      toast({ title: "Order updated" });
     },
-    {
-      id: 'ORD002',
-      customer: 'Jane Smith',
-      email: 'jane@example.com',
-      phone: '+91 98765 43211',
-      products: ['Coconut Water x10', 'Coconut Oil x1'],
-      amount: '₹2,456',
-      status: 'Processing',
-      date: '2024-01-15',
-      address: '456 Oak Ave, Bangalore, Karnataka'
+    onError: () => {
+      toast({ title: "Failed to update order", description: "Please try again." });
     },
-    {
-      id: 'ORD003',
-      customer: 'Bob Johnson',
-      email: 'bob@example.com',
-      phone: '+91 98765 43212',
-      products: ['Fresh Tender Coconut x3'],
-      amount: '₹987',
-      status: 'Pending',
-      date: '2024-01-14',
-      address: '789 Pine Rd, Hyderabad, Telangana'
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteOrder(id, token as string),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      toast({ title: "Order deleted" });
     },
-  ];
+    onError: () => {
+      toast({ title: "Failed to delete order", description: "Please try again." });
+    },
+  });
+
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-muted-foreground">Checking admin access...</p>
+      </div>
+    );
+  }
+
+  const handleStatusChange = (orderId: string, newStatus: string) => {
+    updateMutation.mutate({ id: orderId, status: newStatus });
+  };
+
+  const handleDelete = (orderId: string) => {
+    if (window.confirm("Are you sure you want to delete this order?")) {
+      deleteMutation.mutate(orderId);
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Completed':
+      case 'delivered':
         return 'bg-green-100 text-green-800';
-      case 'Processing':
+      case 'processing':
         return 'bg-blue-100 text-blue-800';
-      case 'Pending':
+      case 'shipped':
+        return 'bg-purple-100 text-purple-800';
+      case 'pending':
         return 'bg-yellow-100 text-yellow-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -96,66 +161,89 @@ const AdminOrders: React.FC = () => {
           <CardDescription>A total of {orders.length} orders</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left p-4 font-medium">Order ID</th>
-                  <th className="text-left p-4 font-medium">Customer</th>
-                  <th className="text-left p-4 font-medium">Products</th>
-                  <th className="text-left p-4 font-medium">Amount</th>
-                  <th className="text-left p-4 font-medium">Status</th>
-                  <th className="text-left p-4 font-medium">Date</th>
-                  <th className="text-left p-4 font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((order) => (
-                  <tr key={order.id} className="border-b hover:bg-accent/50">
-                    <td className="p-4">
-                      <div>
-                        <p className="font-medium">{order.id}</p>
-                        <p className="text-sm text-muted-foreground">{order.phone}</p>
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <div>
-                        <p className="font-medium">{order.customer}</p>
-                        <p className="text-sm text-muted-foreground">{order.email}</p>
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <div className="max-w-xs">
-                        {order.products.map((product, index) => (
-                          <p key={index} className="text-sm">{product}</p>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="p-4 font-medium">{order.amount}</td>
-                    <td className="p-4">
-                      <Badge className={getStatusColor(order.status)}>
-                        {order.status}
-                      </Badge>
-                    </td>
-                    <td className="p-4 text-sm">{order.date}</td>
-                    <td className="p-4">
-                      <div className="flex gap-2">
-                        <Button variant="ghost" size="sm">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm" className="text-destructive">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </td>
+          {isLoading ? (
+            <p className="text-muted-foreground">Loading orders...</p>
+          ) : orders.length === 0 ? (
+            <p className="text-muted-foreground">No orders found.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left p-4 font-medium">Order ID</th>
+                    <th className="text-left p-4 font-medium">Customer</th>
+                    <th className="text-left p-4 font-medium">Products</th>
+                    <th className="text-left p-4 font-medium">Amount</th>
+                    <th className="text-left p-4 font-medium">Status</th>
+                    <th className="text-left p-4 font-medium">Date</th>
+                    <th className="text-left p-4 font-medium">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {orders.map((order) => (
+                    <tr key={order._id} className="border-b hover:bg-accent/50">
+                      <td className="p-4">
+                        <div>
+                          <p className="font-medium">{order._id.slice(-8)}</p>
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <div>
+                          <p className="font-medium">{order.user.name}</p>
+                          <p className="text-sm text-muted-foreground">{order.user.email}</p>
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <div className="max-w-xs">
+                          {order.items.map((item, index) => (
+                            <p key={index} className="text-sm">
+                              {item.product.name} x{item.quantity}
+                            </p>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="p-4 font-medium">₹{order.totalAmount.toLocaleString("en-IN")}</td>
+                      <td className="p-4">
+                        <Select
+                          value={order.status}
+                          onValueChange={(value) => handleStatusChange(order._id, value)}
+                        >
+                          <SelectTrigger className="w-32">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="processing">Processing</SelectItem>
+                            <SelectItem value="shipped">Shipped</SelectItem>
+                            <SelectItem value="delivered">Delivered</SelectItem>
+                            <SelectItem value="cancelled">Cancelled</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </td>
+                      <td className="p-4 text-sm">
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="p-4">
+                        <div className="flex gap-2">
+                          <Button variant="ghost" size="sm">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-destructive"
+                            onClick={() => handleDelete(order._id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

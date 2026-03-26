@@ -83,6 +83,20 @@ const ProductsGrid = ({ onEnquiry }: ProductsGridProps) => {
           key={product._id}
           className="group bg-card rounded-xl p-6 border border-border hover:border-primary/30 transition-all duration-300 hover:shadow-elevated"
         >
+          {/* Image */}
+          {product.imageUrl && (
+            <div className="w-full h-40 mb-4 rounded-lg overflow-hidden">
+              <img
+                src={product.imageUrl}
+                alt={product.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+            </div>
+          )}
+
           {/* Icon */}
           <div className="w-14 h-14 rounded-xl bg-accent flex items-center justify-center mb-5 group-hover:bg-primary/10 transition-colors">
             <Droplets className="w-7 h-7 text-primary" />

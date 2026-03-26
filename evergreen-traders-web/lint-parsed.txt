@@ -1,0 +1,6 @@
+D:\MERN PROJ\Evergreen traders\evergreen-main\evergreen-traders-web\src\components\ui\command.tsx
+  Line 24: An interface declaring no members is equivalent to its supertype.
+D:\MERN PROJ\Evergreen traders\evergreen-main\evergreen-traders-web\src\components\ui\textarea.tsx
+  Line 5: An interface declaring no members is equivalent to its supertype.
+D:\MERN PROJ\Evergreen traders\evergreen-main\evergreen-traders-web\tailwind.config.ts
+  Line 108: A `require()` style import is forbidden.

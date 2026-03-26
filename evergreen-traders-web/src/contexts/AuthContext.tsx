@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { adminLogin, fetchProfile, getAdminToken, setAdminToken, clearAdminToken } from '@/lib/adminAuth';
 
 interface User {
   id: string;
@@ -33,36 +34,52 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored user session on mount
-    const storedUser = localStorage.getItem('evergreen_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
+    // Check for stored admin token on mount
+    const checkAuth = async () => {
+      const token = getAdminToken();
+      if (token) {
+        try {
+          const profile = await fetchProfile(token);
+          const userData: User = {
+            id: profile._id || profile.id,
+            email: profile.email,
+            name: profile.name,
+            role: profile.role
+          };
+          setUser(userData);
+        } catch (error) {
+          // Token is invalid, clear it
+          clearAdminToken();
+        }
+      }
+      setIsLoading(false);
+    };
+
+    checkAuth();
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     
-    // Simulate API call - replace with actual authentication
     try {
-      // Mock authentication logic
-      if (email === 'admin@evergreen.com' && password === 'admin123') {
-        const adminUser: User = {
-          id: '1',
-          email: 'admin@evergreen.com',
-          name: 'Admin User',
-          role: 'admin'
-        };
-        setUser(adminUser);
-        localStorage.setItem('evergreen_user', JSON.stringify(adminUser));
-        setIsLoading(false);
-        return true;
-      }
+      const res = await adminLogin(email, password);
       
-      // Add more user logic here if needed
+      if (res.role !== 'admin') {
+        setIsLoading(false);
+        return false;
+      }
+
+      const userData: User = {
+        id: res._id,
+        email: res.email,
+        name: res.name,
+        role: res.role
+      };
+
+      setUser(userData);
+      setAdminToken(res.token);
       setIsLoading(false);
-      return false;
+      return true;
     } catch (error) {
       setIsLoading(false);
       return false;
@@ -71,7 +88,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('evergreen_user');
+    clearAdminToken();
   };
 
   const value: AuthContextType = {

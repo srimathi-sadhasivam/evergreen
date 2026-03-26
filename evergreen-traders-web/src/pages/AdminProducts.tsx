@@ -15,59 +15,35 @@ import {
   type Product,
   updateProduct,
 } from "@/lib/api";
-import {
-  ADMIN_TOKEN_STORAGE_KEY,
-  clearAdminToken,
-  fetchProfile,
-  getAdminToken,
-} from "@/lib/adminAuth";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AdminProducts = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { user, logout } = useAuth();
   const [token, setToken] = useState<string | null>(null);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   // Simple auth guard
   useEffect(() => {
-    const storedToken = getAdminToken();
-
-    if (!storedToken) {
+    if (!user || user.role !== 'admin') {
       navigate("/admin/login");
       return;
     }
+  }, [user, navigate]);
 
-    let isMounted = true;
-
-    (async () => {
-      try {
-        const profile = await fetchProfile(storedToken);
-        if (profile.role !== "admin") {
-          throw new Error("Not an admin");
-        }
-        if (isMounted) {
-          setToken(storedToken);
-        }
-      } catch {
-        clearAdminToken();
-        navigate("/admin/login");
-      } finally {
-        if (isMounted) {
-          setIsCheckingAuth(false);
-        }
-      }
-    })();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [navigate]);
+  // Get token from localStorage for API calls
+  useEffect(() => {
+    const storedToken = localStorage.getItem("evergreen_admin_token");
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []);
 
   const { data: products = [], isLoading } = useQuery<Product[]>({
     queryKey: ["products"],
     queryFn: fetchProducts,
-    enabled: !!token && !isCheckingAuth,
+    enabled: !!token,
   });
 
   const createMutation = useMutation({
@@ -111,17 +87,16 @@ const AdminProducts = () => {
 
   const [form, setForm] = useState<AdminProductFormState>(initialFormState);
 
-  if (isCheckingAuth) {
+  if (!user || user.role !== 'admin') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <p className="text-muted-foreground">Checking admin access...</p>
+        <p className="text-muted-foreground">Redirecting to login...</p>
       </div>
     );
   }
 
   const handleLogout = () => {
-    clearAdminToken();
-    localStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
+    logout();
     navigate("/admin/login");
   };
 
@@ -133,6 +108,7 @@ const AdminProducts = () => {
       name: form.name,
       description: form.description,
       price: Number(form.price),
+      imageUrl: form.imageUrl || undefined,
       category: form.category || undefined,
       stock: form.stock ? Number(form.stock) : undefined,
       isActive: form.isActive,
@@ -205,6 +181,16 @@ const AdminProducts = () => {
                   step="1"
                   value={form.stock}
                   onChange={(e) => setForm((f) => ({ ...f, stock: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="imageUrl">Image URL (optional)</Label>
+                <Input
+                  id="imageUrl"
+                  type="url"
+                  value={form.imageUrl}
+                  onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
+                  placeholder="https://example.com/image.jpg"
                 />
               </div>
               <div className="space-y-2 md:col-span-2">
@@ -309,6 +295,7 @@ type AdminProductFormState = {
   category: string;
   stock: string;
   description: string;
+  imageUrl: string;
   isActive: boolean;
 };
 
@@ -318,6 +305,7 @@ const initialFormState: AdminProductFormState = {
   category: "",
   stock: "",
   description: "",
+  imageUrl: "",
   isActive: true,
 };
 
