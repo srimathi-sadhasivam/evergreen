@@ -17,6 +17,9 @@ import {
 } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 
+const PRODUCT_IMAGE_FALLBACK =
+  "https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=1200&q=80";
+
 const AdminProducts = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -253,6 +256,19 @@ const AdminProducts = () => {
                     </p>
                   </CardHeader>
                   <CardContent className="space-y-3 pt-0">
+                    <div className="w-full h-40 rounded-md overflow-hidden bg-muted">
+                      <img
+                        src={product.imageUrl || PRODUCT_IMAGE_FALLBACK}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        onError={(e) => {
+                          if (e.currentTarget.src !== PRODUCT_IMAGE_FALLBACK) {
+                            e.currentTarget.src = PRODUCT_IMAGE_FALLBACK;
+                          }
+                        }}
+                      />
+                    </div>
                     <p className="text-sm text-muted-foreground line-clamp-3">
                       {product.description}
                     </p>

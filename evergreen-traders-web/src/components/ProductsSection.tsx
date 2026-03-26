@@ -1,143 +1,254 @@
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Droplets } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { fetchProducts, type Product } from "@/lib/api";
+import { MessageCircle, Phone } from "lucide-react";
+
+type WholesaleProduct = {
+  name: string;
+  currentPrice: number;
+  category: "PREMIUM" | "WATER" | "REGULAR";
+  weight: string;
+  shelfLife: string;
+  MOQ: number;
+  imageUrl: string;
+};
+
+const WHOLESALE_PRODUCTS: WholesaleProduct[] = [
+  {
+    name: "Premium Tender Coconut",
+    currentPrice: 38,
+    category: "PREMIUM",
+    weight: "500g-700g",
+    shelfLife: "15 Days",
+    MOQ: 300,
+    imageUrl:
+      "https://images.unsplash.com/photo-1625204614387-73c8996f9f5f?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "Natural Coconut Water Grade",
+    currentPrice: 32,
+    category: "WATER",
+    weight: "450g-650g",
+    shelfLife: "10 Days",
+    MOQ: 500,
+    imageUrl:
+      "https://images.unsplash.com/photo-1577805947697-89e18249d767?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "Regular Brown Coconut",
+    currentPrice: 27,
+    category: "REGULAR",
+    weight: "550g-800g",
+    shelfLife: "25 Days",
+    MOQ: 700,
+    imageUrl:
+      "https://images.unsplash.com/photo-1615485291234-9d694218aeb3?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "Semi Husked Wholesale Coconut",
+    currentPrice: 29,
+    category: "REGULAR",
+    weight: "600g-850g",
+    shelfLife: "20 Days",
+    MOQ: 500,
+    imageUrl:
+      "https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "Export Grade Green Coconut",
+    currentPrice: 41,
+    category: "PREMIUM",
+    weight: "550g-750g",
+    shelfLife: "18 Days",
+    MOQ: 400,
+    imageUrl:
+      "https://images.unsplash.com/photo-1558645836-e44122a743e1?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "Chilled Coconut Water Stock",
+    currentPrice: 34,
+    category: "WATER",
+    weight: "400g-600g",
+    shelfLife: "7 Days",
+    MOQ: 600,
+    imageUrl:
+      "https://images.unsplash.com/photo-1598289431512-b97b0917affc?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "Copra Processing Coconut",
+    currentPrice: 31,
+    category: "REGULAR",
+    weight: "650g-900g",
+    shelfLife: "30 Days",
+    MOQ: 800,
+    imageUrl:
+      "https://images.unsplash.com/photo-1617957743098-10d9f8f289ec?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "Temple Grade Tender Coconut",
+    currentPrice: 36,
+    category: "PREMIUM",
+    weight: "500g-680g",
+    shelfLife: "12 Days",
+    MOQ: 500,
+    imageUrl:
+      "https://images.unsplash.com/photo-1627993029741-343391d22b27?auto=format&fit=crop&w=1200&q=80",
+  },
+];
+
+const WHATSAPP_NUMBER = "919876543210";
+const CALL_NUMBER = "+919876543210";
+const BRAND_GREEN = "#166534";
+
+const getBulkPrice = (price: number) => Math.round(price * 0.92);
+
+const getCategoryClasses = (category: WholesaleProduct["category"]) => {
+  if (category === "PREMIUM") return "bg-emerald-100 text-emerald-800";
+  if (category === "WATER") return "bg-cyan-100 text-cyan-800";
+  return "bg-amber-100 text-amber-800";
+};
+
+const buildWhatsAppTemplate = (product: WholesaleProduct) => {
+  const message = `Hello Evergreen Traders! I am interested in ${product.name}. My estimated requirement is ${product.MOQ} units. Please send me the best quote for delivery to [Location].`;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+};
 
 const ProductsSection = () => {
-  const handleEnquiry = (productName: string) => {
-    window.open(
-      `https://wa.me/919876543210?text=Hello! I'm interested in your ${productName}. Please share more details.`,
-      "_blank"
-    );
+  const today = new Date().toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+
+  const handleEnquiry = (product: WholesaleProduct) => {
+    window.open(buildWhatsAppTemplate(product), "_blank");
+  };
+
+  const handleCallNow = () => {
+    window.location.href = `tel:${CALL_NUMBER}`;
+  };
+
+  const handleCatalogWhatsApp = () => {
+    const message =
+      "Hello Evergreen Traders! Please share your complete wholesale coconut catalog and today's bulk pricing.";
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
   };
 
   return (
-    <section id="products" className="section-padding bg-background">
+    <section id="products" className="section-padding bg-background pb-28 md:pb-24">
       <div className="container mx-auto">
-        {/* Section Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-10">
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
             Our Products
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            We offer a variety of fresh coconuts to meet all your needs
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-5">
+            Professional wholesale catalog for retailers, distributors, and bulk buyers.
           </p>
+          <span
+            className="inline-flex items-center rounded-full px-4 py-1.5 text-sm font-semibold text-white"
+            style={{ backgroundColor: BRAND_GREEN }}
+          >
+            Last Updated: {today}
+          </span>
         </div>
 
-        {/* Products Grid */}
-        <ProductsGrid onEnquiry={handleEnquiry} />
+        <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-6">
+          {WHOLESALE_PRODUCTS.map((product) => (
+            <article
+              key={product.name}
+              className="bg-card rounded-xl border border-border overflow-hidden shadow-soft hover:shadow-elevated transition-all duration-300"
+            >
+              <div className="h-44 w-full overflow-hidden">
+                <img
+                  src={product.imageUrl}
+                  alt={product.name}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+
+              <div className="p-5 space-y-4">
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="font-display text-xl font-bold text-foreground leading-tight">
+                    {product.name}
+                  </h3>
+                  <span
+                    className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-bold ${getCategoryClasses(product.category)}`}
+                  >
+                    {product.category}
+                  </span>
+                </div>
+
+                <p className="text-lg font-bold" style={{ color: BRAND_GREEN }}>
+                  ₹{product.currentPrice.toLocaleString("en-IN")} / unit
+                </p>
+
+                <div className="rounded-lg border border-border p-3 bg-muted/30">
+                  <p className="text-sm font-semibold text-foreground mb-2">Specs</p>
+                  <ul className="space-y-1.5 text-sm text-muted-foreground">
+                    <li>Weight: {product.weight}</li>
+                    <li>Shelf Life: {product.shelfLife}</li>
+                    <li className="font-semibold text-foreground">
+                      MOQ: <span style={{ color: BRAND_GREEN }}>{product.MOQ} units</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="rounded-lg border border-border p-3">
+                  <p className="text-sm font-semibold text-foreground mb-2">Bulk Pricing</p>
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-muted-foreground">
+                        <th className="text-left font-medium pb-1">Qty Range</th>
+                        <th className="text-right font-medium pb-1">Price / Unit</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-t">
+                        <td className="py-1.5">Up to 499</td>
+                        <td className="py-1.5 text-right">₹{product.currentPrice}</td>
+                      </tr>
+                      <tr className="border-t">
+                        <td className="py-1.5 font-semibold text-foreground">500+ Units</td>
+                        <td className="py-1.5 text-right font-semibold" style={{ color: BRAND_GREEN }}>
+                          ₹{getBulkPrice(product.currentPrice)}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <Button
+                  className="w-full text-white"
+                  style={{ backgroundColor: BRAND_GREEN }}
+                  onClick={() => handleEnquiry(product)}
+                >
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Enquire Now
+                </Button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/95 border-t border-border p-3">
+        <div className="grid grid-cols-2 gap-3">
+          <Button variant="outline" className="w-full" onClick={handleCallNow}>
+            <Phone className="w-4 h-4 mr-2" />
+            Call Now
+          </Button>
+          <Button
+            className="w-full text-white"
+            style={{ backgroundColor: BRAND_GREEN }}
+            onClick={handleCatalogWhatsApp}
+          >
+            <MessageCircle className="w-4 h-4 mr-2" />
+            WhatsApp
+          </Button>
+        </div>
       </div>
     </section>
   );
 };
 
 export default ProductsSection;
-
-type ProductsGridProps = {
-  onEnquiry: (productName: string) => void;
-};
-
-const ProductsGrid = ({ onEnquiry }: ProductsGridProps) => {
-  const {
-    data: products,
-    isLoading,
-    isError,
-  } = useQuery<Product[]>({
-    queryKey: ["products"],
-    queryFn: fetchProducts,
-  });
-
-  if (isLoading) {
-    return (
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {Array.from({ length: 4 }).map((_, index) => (
-          <div
-            key={index}
-            className="bg-card rounded-xl p-6 border border-border space-y-4"
-          >
-            <Skeleton className="w-14 h-14 rounded-xl" />
-            <Skeleton className="h-5 w-32" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-3/4" />
-            <Skeleton className="h-9 w-full" />
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  if (isError || !products?.length) {
-    return (
-      <div className="text-center text-muted-foreground">
-        No products available right now. Please contact us on WhatsApp for
-        current stock details.
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {products.map((product) => (
-        <div
-          key={product._id}
-          className="group bg-card rounded-xl p-6 border border-border hover:border-primary/30 transition-all duration-300 hover:shadow-elevated"
-        >
-          {/* Image */}
-          {product.imageUrl && (
-            <div className="w-full h-40 mb-4 rounded-lg overflow-hidden">
-              <img
-                src={product.imageUrl}
-                alt={product.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                }}
-              />
-            </div>
-          )}
-
-          {/* Icon */}
-          <div className="w-14 h-14 rounded-xl bg-accent flex items-center justify-center mb-5 group-hover:bg-primary/10 transition-colors">
-            <Droplets className="w-7 h-7 text-primary" />
-          </div>
-
-          {/* Title */}
-          <h3 className="font-display text-xl font-bold text-foreground mb-2">
-            {product.name}
-          </h3>
-
-          {/* Price (optional) */}
-          {product.price != null && (
-            <p className="text-sm font-semibold text-primary mb-1">
-              ₹{product.price.toLocaleString("en-IN")}
-            </p>
-          )}
-
-          {/* Category (optional) */}
-          {product.category && (
-            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
-              {product.category}
-            </p>
-          )}
-
-          {/* Description */}
-          <p className="text-muted-foreground text-sm leading-relaxed mb-5 line-clamp-3">
-            {product.description}
-          </p>
-
-          {/* CTA Button */}
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary"
-            onClick={() => onEnquiry(product.name)}
-          >
-            Enquire Now
-          </Button>
-        </div>
-      ))}
-    </div>
-  );
-};
 
