@@ -1,20 +1,17 @@
 # Use Node.js 18 as the base image
 FROM node:18
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json first to leverage Docker layer caching
+# Dependency installation
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
 
-# Copy all application files
 COPY . .
 
-# Expose port 8080
-EXPOSE 8080
+# Render usually expects port 10000 or it dynamically assigns one
+# 8080-ku badhula 10000 use pandradhu safe
+EXPOSE 10000
 
-# Set the start command
+# Server run panna
 CMD ["node", "server.js"]
