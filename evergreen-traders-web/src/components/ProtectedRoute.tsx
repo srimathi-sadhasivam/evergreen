@@ -14,25 +14,29 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { user, isLoading } = useAuth();
   const location = useLocation();
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    // Redirect to login page with return URL
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  if (requiredRole && user.role !== requiredRole) {
-    // User doesn't have required role
-    return <Navigate to="/" replace />;
-  }
-
+  // Allow direct access to admin routes without authentication
   return <>{children}</>;
+
+  // Original authentication logic (commented out)
+  // if (isLoading) {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center">
+  //       <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+  //     </div>
+  //   );
+  // }
+
+  // if (!user) {
+  //   // Redirect to login page with return URL
+  //   return <Navigate to="/login" state={{ from: location }} replace />;
+  // }
+
+  // if (requiredRole && user.role !== requiredRole) {
+  //   // User doesn't have required role
+  //   return <Navigate to="/" replace />;
+  // }
+
+  // return <>{children}</>;
 };
 
 export default ProtectedRoute;

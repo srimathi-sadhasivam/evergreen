@@ -15,6 +15,10 @@ import { AnimatedCard } from '@/components/ui/motion';
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { orders, addOrder } = useOrders();
+  
+  // Debug: Check if context is working
+  console.log('AdminDashboard - Orders context:', orders);
+  console.log('AdminDashboard - Rendering...');
   const [stats, setStats] = useState([
     {
       title: 'Total Orders',

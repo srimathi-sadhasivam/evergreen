@@ -1,12 +1,10 @@
-import { Phone, MessageCircle, Menu, X, User, LogOut } from "lucide-react";
+import { Phone, MessageCircle, Menu, X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const navLinks = [
@@ -20,13 +18,8 @@ const Header = () => {
     window.open("https://wa.me/919842868885?text=Hello! I'm interested in your coconut products.", "_blank");
   };
 
-  const handleLogin = () => {
-    navigate('/login');
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
+  const handleAdminClick = () => {
+    navigate('/admin/dashboard');
   };
 
   return (
@@ -62,24 +55,12 @@ const Header = () => {
               <MessageCircle className="w-4 h-4" />
               WhatsApp
             </Button>
-            {user ? (
-              <>
-                <Link to="/admin/dashboard">
-                  <Button variant="outline" size="sm">
-                    <User className="w-4 h-4 mr-2" />
-                    Admin
-                  </Button>
-                </Link>
-                <Button variant="ghost" size="sm" onClick={handleLogout}>
-                  <LogOut className="w-4 h-4" />
-                </Button>
-              </>
-            ) : (
-              <Button variant="outline" size="sm" onClick={handleLogin}>
+            <Link to="/admin/dashboard">
+              <Button variant="outline" size="sm">
                 <User className="w-4 h-4 mr-2" />
-                Login
+                Admin
               </Button>
-            )}
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -110,25 +91,12 @@ const Header = () => {
                 <MessageCircle className="w-4 h-4" />
                 Order on WhatsApp
               </Button>
-              {user ? (
-                <>
-                  <Link to="/admin/dashboard" onClick={() => setIsMenuOpen(false)}>
-                    <Button variant="outline" className="w-full justify-start">
-                      <User className="w-4 h-4 mr-2" />
-                      Admin Dashboard
-                    </Button>
-                  </Link>
-                  <Button variant="ghost" className="w-full justify-start" onClick={handleLogout}>
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Logout
-                  </Button>
-                </>
-              ) : (
-                <Button variant="outline" className="mt-2" onClick={handleLogin}>
+              <Link to="/admin/dashboard" onClick={() => setIsMenuOpen(false)}>
+                <Button variant="outline" className="w-full justify-start">
                   <User className="w-4 h-4 mr-2" />
-                  Login
+                  Admin Dashboard
                 </Button>
-              )}
+              </Link>
             </nav>
           </div>
         )}

@@ -32,8 +32,10 @@ const OrdersContext = createContext<OrdersContextType | undefined>(undefined);
 export const useOrders = () => {
   const context = useContext(OrdersContext);
   if (context === undefined) {
+    console.error('useOrders must be used within an OrdersProvider');
     throw new Error('useOrders must be used within an OrdersProvider');
   }
+  console.log('useOrders - context value:', context);
   return context;
 };
 

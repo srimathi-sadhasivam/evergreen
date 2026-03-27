@@ -8,16 +8,13 @@ import {
   Users, 
   Menu, 
   X,
-  LogOut,
   Home
 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
 
 const AdminLayout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
 
   const menuItems = [
     { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -25,11 +22,6 @@ const AdminLayout: React.FC = () => {
     { path: '/admin/products', label: 'Products', icon: Package },
     { path: '/admin/users', label: 'Users', icon: Users },
   ];
-
-  const handleLogout = () => {
-    logout();
-    navigate('/admin/login');
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -107,20 +99,12 @@ const AdminLayout: React.FC = () => {
               </ul>
             </nav>
 
-            {/* User info and logout */}
+            {/* User info - Removed */}
             <div className="p-4 border-t">
               <div className="mb-3 px-4">
-                <p className="text-sm font-medium">{user?.name}</p>
-                <p className="text-xs text-muted-foreground">{user?.email}</p>
+                <p className="text-sm font-medium">Admin Panel</p>
+                <p className="text-xs text-muted-foreground">Evergreen Traders</p>
               </div>
-              <Button
-                variant="outline"
-                className="w-full justify-start"
-                onClick={handleLogout}
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Logout
-              </Button>
             </div>
           </div>
         </aside>
