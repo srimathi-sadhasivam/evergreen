@@ -1,6 +1,6 @@
 export const API_BASE_URL = 
   import.meta.env.VITE_API_BASE_URL || 
-  "https://evergreen-1.onrender.com"; // Fallback to production URL
+  "http://localhost:5000"; // Fallback to local development URL
 
 export type Product = {
   _id: string;
