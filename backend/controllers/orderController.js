@@ -68,9 +68,47 @@ const getAllOrders = asyncHandler(async (req, res) => {
   res.json(orders);
 });
 
+// @desc    Update order status (admin)
+// @route   PUT /api/orders/:id
+// @access  Admin
+const updateOrder = asyncHandler(async (req, res) => {
+  const { status } = req.body;
+
+  const order = await Order.findById(req.params.id);
+
+  if (!order) {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+
+  order.status = status || order.status;
+
+  const updatedOrder = await order.save();
+
+  res.json(updatedOrder);
+});
+
+// @desc    Delete order (admin)
+// @route   DELETE /api/orders/:id
+// @access  Admin
+const deleteOrder = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+
+  if (!order) {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+
+  await order.deleteOne();
+
+  res.json({ message: 'Order removed' });
+});
+
 module.exports = {
   createOrder,
   getMyOrders,
   getAllOrders,
+  updateOrder,
+  deleteOrder,
 };
 
