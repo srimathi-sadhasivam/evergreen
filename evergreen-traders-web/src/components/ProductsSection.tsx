@@ -22,7 +22,7 @@ const WHOLESALE_PRODUCTS: WholesaleProduct[] = [
     shelfLife: "15 Days",
     MOQ: 300,
     imageUrl:
-      "https://images.unsplash.com/photo-1625204614387-73c8996f9f5f?auto=format&fit=crop&w=1200&q=80",
+      "https://images.pexels.com/photos/1424457/pexels-photo-1424457.jpeg",
   },
   {
     name: "Natural Coconut Water Grade",
@@ -32,7 +32,7 @@ const WHOLESALE_PRODUCTS: WholesaleProduct[] = [
     shelfLife: "10 Days",
     MOQ: 500,
     imageUrl:
-      "https://images.unsplash.com/photo-1577805947697-89e18249d767?auto=format&fit=crop&w=1200&q=80",
+      "https://images.pexels.com/photos/36533618/pexels-photo-36533618.jpeg",
   },
   {
     name: "Regular Brown Coconut",
@@ -42,7 +42,7 @@ const WHOLESALE_PRODUCTS: WholesaleProduct[] = [
     shelfLife: "25 Days",
     MOQ: 700,
     imageUrl:
-      "https://images.unsplash.com/photo-1615485291234-9d694218aeb3?auto=format&fit=crop&w=1200&q=80",
+      "https://images.pexels.com/photos/7543123/pexels-photo-7543123.jpeg",
   },
   {
     name: "Semi Husked Wholesale Coconut",
@@ -52,7 +52,7 @@ const WHOLESALE_PRODUCTS: WholesaleProduct[] = [
     shelfLife: "20 Days",
     MOQ: 500,
     imageUrl:
-      "https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=1200&q=80",
+      "https://images.pexels.com/photos/5608058/pexels-photo-5608058.jpeg",
   },
   {
     name: "Export Grade Green Coconut",
@@ -62,7 +62,7 @@ const WHOLESALE_PRODUCTS: WholesaleProduct[] = [
     shelfLife: "18 Days",
     MOQ: 400,
     imageUrl:
-      "https://images.unsplash.com/photo-1558645836-e44122a743e1?auto=format&fit=crop&w=1200&q=80",
+      "https://images.pexels.com/photos/4004522/pexels-photo-4004522.jpeg",
   },
   {
     name: "Chilled Coconut Water Stock",
@@ -72,7 +72,7 @@ const WHOLESALE_PRODUCTS: WholesaleProduct[] = [
     shelfLife: "7 Days",
     MOQ: 600,
     imageUrl:
-      "https://images.unsplash.com/photo-1598289431512-b97b0917affc?auto=format&fit=crop&w=1200&q=80",
+      "https://images.pexels.com/photos/3030371/pexels-photo-3030371.jpeg",
   },
   {
     name: "Copra Processing Coconut",
@@ -82,7 +82,7 @@ const WHOLESALE_PRODUCTS: WholesaleProduct[] = [
     shelfLife: "30 Days",
     MOQ: 800,
     imageUrl:
-      "https://images.unsplash.com/photo-1617957743098-10d9f8f289ec?auto=format&fit=crop&w=1200&q=80",
+      "https://5.imimg.com/data5/SELLER/Default/2024/4/412323886/JZ/AT/XR/6630905/coconut-copra.jpg",
   },
   {
     name: "Temple Grade Tender Coconut",
@@ -92,7 +92,7 @@ const WHOLESALE_PRODUCTS: WholesaleProduct[] = [
     shelfLife: "12 Days",
     MOQ: 500,
     imageUrl:
-      "https://images.unsplash.com/photo-1627993029741-343391d22b27?auto=format&fit=crop&w=1200&q=80",
+      "https://cpimg.tistatic.com/11029706/s/4/Semi-Husk-Coconut..jpg",
   },
 ];
 
