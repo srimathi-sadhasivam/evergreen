@@ -80,7 +80,7 @@ const SmartInquiryModal = ({ product, isOpen, onClose }: SmartInquiryModalProps)
       }
 
       // Send data to API first
-      const response = await fetch(`${API_BASE_URL}/api/inquiries/product`, {
+      const response = await fetch(`${API_BASE_URL}/inquiries/product`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

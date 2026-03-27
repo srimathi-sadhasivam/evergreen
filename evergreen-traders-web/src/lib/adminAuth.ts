@@ -23,7 +23,7 @@ export function clearAdminToken() {
 }
 
 export async function adminLogin(email: string, password: string): Promise<LoginResponse> {
-  const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
+  const res = await fetch(`${API_BASE_URL}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
@@ -37,7 +37,7 @@ export async function adminLogin(email: string, password: string): Promise<Login
 }
 
 export async function fetchProfile(token: string): Promise<{ role: string; email: string; name: string }> {
-  const res = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+  const res = await fetch(`${API_BASE_URL}/auth/profile`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 

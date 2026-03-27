@@ -1,6 +1,6 @@
 export const API_BASE_URL = 
   import.meta.env.VITE_API_BASE_URL || 
-  "http://localhost:5000"; // Fallback to local development URL
+  "https://evergreen-backend-ln99.onrender.com/api"; // Production backend URL
 
 export type Product = {
   _id: string;
@@ -14,7 +14,7 @@ export type Product = {
 };
 
 export async function fetchProducts(): Promise<Product[]> {
-  const res = await fetch(`${API_BASE_URL}/api/products`);
+  const res = await fetch(`${API_BASE_URL}/products`);
 
   if (!res.ok) {
     throw new Error("Failed to load products");
@@ -34,7 +34,7 @@ export type CreateProductInput = {
 };
 
 export async function createProduct(input: CreateProductInput, token: string): Promise<Product> {
-  const res = await fetch(`${API_BASE_URL}/api/products`, {
+  const res = await fetch(`${API_BASE_URL}/products`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -55,7 +55,7 @@ export async function updateProduct(
   input: Partial<CreateProductInput>,
   token: string
 ): Promise<Product> {
-  const res = await fetch(`${API_BASE_URL}/api/products/${id}`, {
+  const res = await fetch(`${API_BASE_URL}/products/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -72,7 +72,7 @@ export async function updateProduct(
 }
 
 export async function deleteProduct(id: string, token: string): Promise<{ message: string }> {
-  const res = await fetch(`${API_BASE_URL}/api/products/${id}`, {
+  const res = await fetch(`${API_BASE_URL}/products/${id}`, {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -103,7 +103,7 @@ export type Order = {
 };
 
 export async function fetchOrders(token: string): Promise<Order[]> {
-  const res = await fetch(`${API_BASE_URL}/api/orders`, {
+  const res = await fetch(`${API_BASE_URL}/orders`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -119,7 +119,7 @@ export async function updateOrder(
   input: { status: string },
   token: string
 ): Promise<Order> {
-  const res = await fetch(`${API_BASE_URL}/api/orders/${id}`, {
+  const res = await fetch(`${API_BASE_URL}/orders/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -136,7 +136,7 @@ export async function updateOrder(
 }
 
 export async function deleteOrder(id: string, token: string): Promise<{ message: string }> {
-  const res = await fetch(`${API_BASE_URL}/api/orders/${id}`, {
+  const res = await fetch(`${API_BASE_URL}/orders/${id}`, {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
   });

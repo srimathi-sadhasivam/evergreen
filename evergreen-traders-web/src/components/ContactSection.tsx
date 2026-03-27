@@ -29,14 +29,14 @@ const ContactSection = () => {
     
     try {
       // Send data to API
-      console.log('Submitting contact form to:', `${API_BASE_URL}/api/inquiries/contact`);
+      console.log('Submitting contact form to:', `${API_BASE_URL}/inquiries/contact`);
       console.log('Form data:', {
         customerName: formData.name,
         phoneNumber: formData.phone,
         message: formData.message,
       });
 
-      const response = await fetch(`${API_BASE_URL}/api/inquiries/contact`, {
+      const response = await fetch(`${API_BASE_URL}/inquiries/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
