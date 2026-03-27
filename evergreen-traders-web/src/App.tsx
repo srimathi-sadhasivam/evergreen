@@ -10,9 +10,7 @@ import WhatsAppFab from "@/components/ui/WhatsAppFab";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/AdminDashboard";
-import AdminOrders from "./pages/AdminOrders";
 import AdminUsers from "./pages/AdminUsers";
-import AdminProducts from "./pages/AdminProducts";
 
 const queryClient = new QueryClient();
 
@@ -30,8 +28,6 @@ const App = () => (
               {/* Admin Routes - No Protection */}
               <Route path="/admin" element={<AdminLayout />}>
                 <Route path="dashboard" element={<AdminDashboard />} />
-                <Route path="products" element={<AdminProducts />} />
-                <Route path="orders" element={<AdminOrders />} />
                 <Route path="users" element={<AdminUsers />} />
               </Route>
 

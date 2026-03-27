@@ -3,8 +3,6 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { 
   LayoutDashboard, 
-  Package, 
-  ShoppingCart, 
   Users, 
   Menu, 
   X,
@@ -18,8 +16,6 @@ const AdminLayout: React.FC = () => {
 
   const menuItems = [
     { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/admin/orders', label: 'Orders', icon: ShoppingCart },
-    { path: '/admin/products', label: 'Products', icon: Package },
     { path: '/admin/users', label: 'Users', icon: Users },
   ];
 
