@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MessageCircle, Phone, Volume2, X, TrendingUp, Activity } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/api";
 
 type WholesaleProduct = {
   name: string;
@@ -79,7 +80,7 @@ const SmartInquiryModal = ({ product, isOpen, onClose }: SmartInquiryModalProps)
       }
 
       // Send data to API first
-      const response = await fetch('/api/inquiries/product', {
+      const response = await fetch(`${API_BASE_URL}/api/inquiries/product`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

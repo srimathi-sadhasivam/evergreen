@@ -1,9 +1,10 @@
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { MapPin, Phone, Clock, MessageCircle } from "lucide-react";
-import { useState } from "react";
+import { MapPin, Phone, Mail, MessageCircle, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/api";
 
 const ContactSection = () => {
   const { toast } = useToast();
@@ -28,14 +29,14 @@ const ContactSection = () => {
     
     try {
       // Send data to API
-      console.log('Submitting contact form to:', '/api/inquiries/contact');
+      console.log('Submitting contact form to:', `${API_BASE_URL}/api/inquiries/contact`);
       console.log('Form data:', {
         customerName: formData.name,
         phoneNumber: formData.phone,
         message: formData.message,
       });
 
-      const response = await fetch('/api/inquiries/contact', {
+      const response = await fetch(`${API_BASE_URL}/api/inquiries/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
